@@ -97,8 +97,7 @@ export class FirebirdConnection implements DatabaseConnection {
   }
 
   streamQuery<R>(
-    compiledQuery: CompiledQuery,
-    chunkSize?: number,
+    _compiledQuery: CompiledQuery,
   ): AsyncIterableIterator<QueryResult<R>> {
     throw new Error("Not implemented");
   }
@@ -107,7 +106,7 @@ export class FirebirdConnection implements DatabaseConnection {
     return this.#identifier;
   }
 
-  get connection(): Connection {
+  get connection(): FirebirdDb {
     return this.#connection;
   }
 }
