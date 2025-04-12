@@ -1,12 +1,8 @@
 import { EventEmitter } from "events";
 
-export interface FirebirdConfig {
-  host: string;
-  port: number;
-  database: string;
-  user: string;
-  password: string;
-  lowercase_keys: boolean;
+export interface FirebirdPool extends EventEmitter {
+  get(callback: (err: Error | null, db: FirebirdDb) => void): void;
+  destroy(): void;
 }
 
 export interface FirebirdDb extends EventEmitter {
