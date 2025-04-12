@@ -3,15 +3,6 @@ import { Logger } from "./logger";
 import { v4 as uuid } from "uuid";
 import { FirebirdDb } from "./firebird";
 
-interface ExecuteOptions {
-  host: string;
-  port: number;
-  database: string;
-  user: string;
-  password: string;
-  lowercase_keys: boolean;
-}
-
 export class FirebirdConnection implements DatabaseConnection {
   #connection: FirebirdDb;
   #identifier: string;
