@@ -1,10 +1,10 @@
 import { Dialect, Kysely } from "kysely";
-import { FirebirdPool } from "./firebird";
-import { Logger } from "./logger";
-import { FirebirdDriver } from "./driver";
-import { FirebirdAdapter } from "./adapter";
-import { FirebirdIntrospector, IntrospectorDB } from "./introspector";
-import { FirebirdQueryCompiler } from "./query-compiler";
+import { FirebirdPool } from "./firebird.js";
+import { Logger } from "./logger.js";
+import { FirebirdDriver } from "./driver.js";
+import { FirebirdAdapter } from "./adapter.js";
+import { FirebirdIntrospector, IntrospectorDB } from "./introspector.js";
+import { FirebirdQueryCompiler } from "./query-compiler.js";
 
 export interface FirebirdDialectConfig {
   pool: FirebirdPool;

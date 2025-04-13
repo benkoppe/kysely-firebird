@@ -1,8 +1,9 @@
-import { Driver } from "kysely";
-import { FirebirdConnection } from "./connection";
-import { defaultLogger, Logger } from "./logger";
-import { FirebirdDialectConfig } from "./dialect";
-import { FirebirdDb } from "./firebird";
+import { Driver, TransactionSettings } from "kysely";
+import { FirebirdConnection } from "./connection.js";
+import { defaultLogger, Logger } from "./logger.js";
+import { FirebirdDialectConfig } from "./dialect.js";
+import { FirebirdDb, FirebirdTransaction } from "./firebird.js";
+import Firebird from "node-firebird";
 
 export class FirebirdDriver implements Driver {
   readonly #config: FirebirdDialectConfig;

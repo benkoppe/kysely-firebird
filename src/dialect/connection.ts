@@ -1,7 +1,7 @@
 import { CompiledQuery, DatabaseConnection, QueryResult } from "kysely";
-import { Logger } from "./logger";
 import { v4 as uuid } from "uuid";
-import { FirebirdDb } from "./firebird";
+import { FirebirdDb, FirebirdTransaction } from "./firebird.js";
+import { Logger } from "./logger.js";
 
 export class FirebirdConnection implements DatabaseConnection {
   #connection: FirebirdDb;
