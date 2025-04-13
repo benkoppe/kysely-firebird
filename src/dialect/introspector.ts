@@ -19,6 +19,7 @@ export interface RdbRelationFieldsTable {
   RDB$FIELD_SOURCE: string;
   RDB$NULL_FLAG: number | null;
   RDB$DEFAULT_SOURCE: string | null;
+  RDB$IDENTITY_TYPE: number | null;
 }
 
 export interface RdbFieldsTable {
@@ -68,6 +69,7 @@ export class FirebirdIntrospector implements DatabaseIntrospector {
         "f.RDB$FIELD_SCALE",
         "rf.RDB$NULL_FLAG",
         "rf.RDB$DEFAULT_SOURCE",
+        "rf.RDB$IDENTITY_TYPE",
       ])
       .execute();
 
@@ -86,7 +88,7 @@ export class FirebirdIntrospector implements DatabaseIntrospector {
           // In Firebird a NOT NULL constraint is indicated by a non-null RDB$NULL_FLAG
           isNullable: col.RDB$NULL_FLAG !== 1,
           hasDefaultValue: col.RDB$DEFAULT_SOURCE !== null,
-          isAutoIncrementing: false, // Adjust this if you detect generator-trigger patterns
+          isAutoIncrementing: col.RDB$IDENTITY_TYPE !== null,
         }));
       return {
         schema: "default",
@@ -119,6 +121,7 @@ export class FirebirdIntrospector implements DatabaseIntrospector {
         "f.RDB$FIELD_SCALE",
         "rf.RDB$NULL_FLAG",
         "rf.RDB$DEFAULT_SOURCE",
+        "rf.RDB$IDENTITY_TYPE",
       ])
       .execute();
 
@@ -137,7 +140,7 @@ export class FirebirdIntrospector implements DatabaseIntrospector {
           // In Firebird, a non-null NULL_FLAG usually indicates a NOT NULL constraint
           isNullable: col.RDB$NULL_FLAG !== 1,
           hasDefaultValue: col.RDB$DEFAULT_SOURCE !== null,
-          isAutoIncrementing: false, // Modify as necessary if detecting generator-trigger patterns
+          isAutoIncrementing: col.RDB$IDENTITY_TYPE !== null,
         }));
       return {
         schema: "default", // Adjust if using explicit schema support in Firebird 3.0+
