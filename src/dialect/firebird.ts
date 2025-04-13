@@ -41,7 +41,7 @@ export interface FirebirdDb extends EventEmitter {
   detach(callback?: (err: Error | null) => void): void;
 
   transaction(
-    isolation: number,
+    isolation: number[],
     callback: (err: Error | null, transaction?: FirebirdTransaction) => void,
   ): void;
 
