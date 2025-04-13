@@ -1,11 +1,9 @@
-import { EventEmitter } from "events";
-
-export interface FirebirdPool extends EventEmitter {
+export interface FirebirdPool {
   get(callback: (err: Error | null, db: FirebirdDb) => void): void;
   destroy(): void;
 }
 
-export interface FirebirdDb extends EventEmitter {
+export interface FirebirdDb {
   query(
     sql: string,
     callback: (err: Error | null, result: any[]) => void,
