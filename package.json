@@ -1,20 +1,48 @@
 {
   "name": "kysely-firebird",
   "version": "1.0.0",
-  "description": "",
+  "description": "Kysely Dialect and Type Generator for Firebird DB.",
+  "author": "Ben Koppe",
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/benkoppe/kysely-firebird"
+  },
+  "keywords": [
+    "sql",
+    "kysely",
+    "dialect",
+    "firebird",
+    "firebirddb"
+  ],
   "scripts": {
     "build": "tsup",
     "lint": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "pnpm lint && node dist/dev.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "packageManager": "pnpm@10.5.2",
   "dependencies": {
     "kysely": "^0.27.6",
