@@ -32,16 +32,76 @@ export class FirebirdDriver implements Driver {
     return connection;
   }
 
-  async beginTransaction(connection: FirebirdConnection): Promise<void> {
+  async beginTransaction(
+    connection: FirebirdConnection,
+    settings: TransactionSettings,
+  ): Promise<void> {
     this.#log.debug({ id: connection.identifier }, "Beginning transaction");
+
+    if (connection.hasActiveTransaction()) {
+      throw new Error("Transaction already active");
+    }
+
+    let isolationLevel: number[];
+    if (settings.isolationLevel) {
+      switch (settings.isolationLevel) {
+        case "snapshot":
+          isolationLevel = Firebird.ISOLATION_REPEATABLE_READ;
+        case "serializable":
+          isolationLevel = Firebird.ISOLATION_SERIALIZABLE;
+        case "read committed":
+          isolationLevel = Firebird.ISOLATION_READ_COMMITTED;
+        case "read uncommitted":
+          isolationLevel = Firebird.ISOLATION_READ_UNCOMMITTED;
+        case "repeatable read":
+          isolationLevel = Firebird.ISOLATION_REPEATABLE_READ;
+      }
+    } else {
+      isolationLevel = Firebird.ISOLATION_READ_COMMITTED;
+    }
+
+    const tx = await new Promise<FirebirdTransaction>((resolve, reject) => {
+      connection.connection.transaction(isolationLevel, (err, tx) => {
+        if (err || !tx) return reject(err);
+        resolve(tx);
+      });
+    });
+
+    connection.setActiveTransaction(tx);
   }
 
   async commitTransaction(connection: FirebirdConnection): Promise<void> {
     this.#log.debug({ id: connection.identifier }, "Transaction committed");
+
+    if (!connection.hasActiveTransaction()) {
+      throw new Error("Transaction not active");
+    }
+
+    await new Promise<void>((resolve, reject) => {
+      connection.transaction!.commit((err) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+
+    connection.resetActiveTransaction();
   }
 
   async rollbackTransaction(connection: FirebirdConnection): Promise<void> {
     this.#log.debug({ id: connection.identifier }, "Transaction rolled back");
+
+    if (!connection.hasActiveTransaction()) {
+      throw new Error("Transaction not active");
+    }
+
+    await new Promise<void>((resolve, reject) => {
+      connection.transaction!.rollback((err) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+
+    connection.resetActiveTransaction();
   }
 
   async releaseConnection(connection: FirebirdConnection): Promise<void> {

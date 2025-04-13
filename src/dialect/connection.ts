@@ -8,26 +8,34 @@ export class FirebirdConnection implements DatabaseConnection {
   #identifier: string;
   #log: Logger;
 
+  #transaction: FirebirdTransaction | null;
+
   constructor(connection: FirebirdDb, logger: Logger) {
     this.#connection = connection;
     this.#log = logger;
     this.#identifier = uuid();
+    this.#transaction = null;
   }
 
   async executeQuery<R>(compiledQuery: CompiledQuery): Promise<QueryResult<R>> {
-    const { sql, bindParams } = this.formatQuery(compiledQuery);
+    const { sql, parameters } = compiledQuery;
+    const bindParams = parameters as unknown[];
+
     const startTime = new Date();
     this.#log.debug(
       { sql: this.formatQueryForLogging(compiledQuery), id: this.#identifier },
       "Executing query",
     );
 
+    const queryMaker = this.#transaction ?? this.#connection;
+
     try {
       const rows: R[] = await new Promise((resolve, reject) => {
-        this.#connection.query(sql, bindParams, (err, result) => {
+        queryMaker.query(sql, bindParams, (err, result) => {
           if (err) return reject(err);
 
-          resolve(result as R[]);
+          // ensure result is an array
+          resolve(Array.isArray(result) ? (result as R[]) : [result as R]);
         });
       });
 
@@ -58,34 +66,6 @@ export class FirebirdConnection implements DatabaseConnection {
     }
   }
 
-  formatQuery(query: CompiledQuery) {
-    const expectedParams: number[] = [];
-    const seenParams = new Set<number>();
-
-    // Collect all parameter indices in order of appearance
-    query.sql.replace(/\$(\d+)/g, (_match, p1) => {
-      const index = parseInt(p1, 10);
-      expectedParams.push(index);
-      seenParams.add(index);
-      return ""; // return value doesn't matter here
-    });
-
-    // Ensure parameters are in order: $1, $2, ..., $N without gaps or duplicates
-    expectedParams.sort((a, b) => a - b);
-    for (let i = 0; i < expectedParams.length; i++) {
-      if (expectedParams[i] !== i + 1) {
-        throw new Error(
-          `Invalid parameter ordering. Expected $${i + 1} but found $${expectedParams[i]}`,
-        );
-      }
-    }
-
-    return {
-      sql: query.sql.replace(/\$(\d+)/g, "?"), // Replace all $<num> with ?
-      bindParams: query.parameters as unknown[],
-    };
-  }
-
   formatQueryForLogging(query: CompiledQuery) {
     return query.sql.replace(/\$(\d+)/g, (_match, p1) => {
       const index = parseInt(p1, 10);
@@ -108,5 +88,31 @@ export class FirebirdConnection implements DatabaseConnection {
 
   get connection(): FirebirdDb {
     return this.#connection;
+  }
+
+  get transaction(): FirebirdTransaction | null {
+    return this.#transaction;
+  }
+
+  hasActiveTransaction(): boolean {
+    return this.#transaction !== null;
+  }
+
+  setActiveTransaction(newTransaction: FirebirdTransaction) {
+    if (this.hasActiveTransaction()) {
+      throw new Error(
+        "You can't create a new transaction, one is already active",
+      );
+    }
+
+    this.#transaction = newTransaction;
+  }
+
+  resetActiveTransaction() {
+    if (!this.hasActiveTransaction()) {
+      throw new Error("No transaction is active");
+    }
+
+    this.#transaction = null;
   }
 }
