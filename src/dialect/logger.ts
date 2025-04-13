@@ -10,7 +10,6 @@ export interface Logger {
   info: LogFn;
   warn: LogFn;
   error: LogFn;
-  fatal: LogFn;
 }
 
 const noop = () => {};
@@ -21,5 +20,4 @@ export const defaultLogger = {
   info: noop,
   warn: noop,
   error: noop,
-  fatal: noop,
 };
