@@ -10,3 +10,4 @@ export type {
   FirebirdDb,
   FirebirdTransaction,
 } from "./dialect/firebird.js";
+export { generate } from "./generator/generate.js";
