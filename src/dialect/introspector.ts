@@ -16,17 +16,23 @@ export interface RdbRelationsTable {
 export interface RdbRelationFieldsTable {
   RDB$RELATION_NAME: string;
   RDB$FIELD_NAME: string;
-  RDB$FIELD_TYPE: number;
-  RDB$FIELD_LENGTH: number | null;
-  RDB$FIELD_PRECISION: number | null;
-  RDB$FIELD_SCALE: number | null;
+  RDB$FIELD_SOURCE: string;
   RDB$NULL_FLAG: number | null;
   RDB$DEFAULT_SOURCE: string | null;
 }
 
+export interface RdbFieldsTable {
+  RDB$FIELD_NAME: string;
+  RDB$FIELD_TYPE: number;
+  RDB$FIELD_LENGTH: number | null;
+  RDB$FIELD_PRECISION: number | null;
+  RDB$FIELD_SCALE: number | null;
+}
+
 export interface IntrospectorDB {
-  RdbRelations: RdbRelationsTable;
-  RdbRelationFields: RdbRelationFieldsTable;
+  RDB$RELATIONS: RdbRelationsTable;
+  RDB$RELATION_FIELDS: RdbRelationFieldsTable;
+  RDB$FIELDS: RdbFieldsTable;
 }
 
 export class FirebirdIntrospector implements DatabaseIntrospector {
@@ -44,23 +50,24 @@ export class FirebirdIntrospector implements DatabaseIntrospector {
     _options?: DatabaseMetadataOptions,
   ): Promise<TableMetadata[]> {
     const rawTables = await this.#db
-      .selectFrom("RdbRelations")
+      .selectFrom("RDB$RELATIONS")
       .select(["RDB$RELATION_NAME", "RDB$SYSTEM_FLAG", "RDB$VIEW_SOURCE"])
       .where("RDB$SYSTEM_FLAG", "=", 0)
       .where("RDB$VIEW_SOURCE", "is", null)
       .execute();
 
     const rawColumns = await this.#db
-      .selectFrom("RdbRelationFields")
+      .selectFrom("RDB$RELATION_FIELDS as rf")
+      .innerJoin("RDB$FIELDS as f", "rf.RDB$FIELD_SOURCE", "f.RDB$FIELD_NAME")
       .select([
-        "RDB$RELATION_NAME",
-        "RDB$FIELD_NAME",
-        "RDB$FIELD_TYPE",
-        "RDB$FIELD_LENGTH",
-        "RDB$FIELD_PRECISION",
-        "RDB$FIELD_SCALE",
-        "RDB$NULL_FLAG",
-        "RDB$DEFAULT_SOURCE",
+        "rf.RDB$RELATION_NAME",
+        "rf.RDB$FIELD_NAME",
+        "f.RDB$FIELD_TYPE",
+        "f.RDB$FIELD_LENGTH",
+        "f.RDB$FIELD_PRECISION",
+        "f.RDB$FIELD_SCALE",
+        "rf.RDB$NULL_FLAG",
+        "rf.RDB$DEFAULT_SOURCE",
       ])
       .execute();
 
@@ -95,22 +102,23 @@ export class FirebirdIntrospector implements DatabaseIntrospector {
   async getViews(_options?: DatabaseMetadataOptions): Promise<TableMetadata[]> {
     // Views are identified in RDB$RELATIONS by a non-null RDB$VIEW_SOURCE.
     const rawViews = await this.#db
-      .selectFrom("RdbRelations")
+      .selectFrom("RDB$RELATIONS")
       .select(["RDB$RELATION_NAME", "RDB$VIEW_SOURCE"])
       .where("RDB$VIEW_SOURCE", "is not", null)
       .execute();
 
     const rawColumns = await this.#db
-      .selectFrom("RdbRelationFields")
+      .selectFrom("RDB$RELATION_FIELDS as rf")
+      .innerJoin("RDB$FIELDS as f", "rf.RDB$FIELD_SOURCE", "f.RDB$FIELD_NAME")
       .select([
-        "RDB$RELATION_NAME",
-        "RDB$FIELD_NAME",
-        "RDB$FIELD_TYPE",
-        "RDB$FIELD_LENGTH",
-        "RDB$FIELD_PRECISION",
-        "RDB$FIELD_SCALE",
-        "RDB$NULL_FLAG",
-        "RDB$DEFAULT_SOURCE",
+        "rf.RDB$RELATION_NAME",
+        "rf.RDB$FIELD_NAME",
+        "f.RDB$FIELD_TYPE",
+        "f.RDB$FIELD_LENGTH",
+        "f.RDB$FIELD_PRECISION",
+        "f.RDB$FIELD_SCALE",
+        "rf.RDB$NULL_FLAG",
+        "rf.RDB$DEFAULT_SOURCE",
       ])
       .execute();
 
