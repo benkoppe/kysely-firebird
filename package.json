@@ -2,9 +2,15 @@
   "name": "kysely-firebird",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsup",
+    "lint": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "pnpm lint && node dist/dev.js"
   },
   "keywords": [],
   "author": "",
