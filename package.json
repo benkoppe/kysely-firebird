@@ -41,6 +41,7 @@
     "build": "tsup",
     "lint": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "release": "pnpm build && changeset publish",
     "dev": "pnpm lint && node dist/dev.js"
   },
   "packageManager": "pnpm@10.5.2",
