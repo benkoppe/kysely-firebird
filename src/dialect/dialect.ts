@@ -5,10 +5,20 @@ import { FirebirdDriver } from "./driver.js";
 import { FirebirdAdapter } from "./adapter.js";
 import { FirebirdIntrospector, IntrospectorDB } from "./introspector.js";
 import { FirebirdQueryCompiler } from "./query-compiler.js";
+import { Options as PrettierOptions } from "prettier";
 
 export interface FirebirdDialectConfig {
   pool: FirebirdPool;
   logger?: Logger;
+  generator?: {
+    type?: "tables" | "views" | "all";
+    tables?: string[]; // restrict tables/views to those listed
+    checkDiff?: boolean;
+    metadata?: boolean;
+    filePath?: string;
+    metadataFilePath?: string;
+    prettierOptions?: PrettierOptions;
+  };
 }
 
 export class FirebirdDialect implements Dialect {
