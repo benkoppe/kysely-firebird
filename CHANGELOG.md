@@ -1,5 +1,11 @@
 # kysely-firebird
 
+## 1.0.3
+
+### Patch Changes
+
+- 2a1c61b: Update dependencies to lateset to work with newest kysely
+
 ## 1.0.2
 
 ### Patch Changes
