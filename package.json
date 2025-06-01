@@ -52,6 +52,8 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.4",
+    "@types/node": "^22.15.29",
+    "kysely-firebird": "link:",
     "prettier": "^3.5.3",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3"
