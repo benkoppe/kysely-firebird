@@ -47,7 +47,7 @@
   "packageManager": "pnpm@10.5.2",
   "dependencies": {
     "kysely": "^0.28.2",
-    "node-firebird": "^1.1.9",
+    "node-firebird": "github:hgourvest/node-firebird#e1c4dd9",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
