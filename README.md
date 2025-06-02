@@ -10,6 +10,10 @@ Implementation guided by [kysely-oracledb](https://github.com/griffiths-waite/ky
 npm install kysely node-firebird kysely-firebird
 ```
 
+> [!IMPORTANT]
+> This project currently uses `node-firebird` version 1.2.x, which isn't yet released on npm.
+> Install the library with `npm install hgourvest/node-firebird#e1c4dd9` to avoid any issues.
+
 ## Usage
 
 ### Firebird DB Dialect
