@@ -13,6 +13,7 @@ import {
   ParensNode,
   SelectQueryNode,
   SetOperationNode,
+  OperatorNode,
 } from "kysely";
 
 const ID_WRAP_REGEX = /"/g;
@@ -46,6 +47,14 @@ export class FirebirdQueryCompiler extends DefaultQueryCompiler {
   protected override visitOffset(node: OffsetNode): void {
     this.append("skip ");
     this.visitNode(node.offset);
+  }
+
+  protected override visitOperator(node: OperatorNode): void {
+    if (node.operator === "ilike") {
+      this.append("containing");
+    } else {
+      this.append(node.operator);
+    }
   }
 
   protected override visitSelectQuery(node: SelectQueryNode): void {
