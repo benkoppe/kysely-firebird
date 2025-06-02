@@ -1,6 +1,6 @@
 {
   "name": "kysely-firebird",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Kysely Dialect and Type Generator for Firebird DB.",
   "author": "Ben Koppe",
   "license": "MIT",

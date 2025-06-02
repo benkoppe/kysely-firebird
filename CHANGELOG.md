@@ -1,5 +1,11 @@
 # kysely-firebird
 
+## 1.1.0
+
+### Minor Changes
+
+- Use latest master branch for `node-firebird` 1.2.x in place of dated npm 1.1.9 (also add unit tests and `ilike` support)
+
 ## 1.0.3
 
 ### Patch Changes
