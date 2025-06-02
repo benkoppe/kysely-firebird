@@ -86,6 +86,9 @@ const pool = Firebird.pool(5, options);
 
 await generate({
   pool: pool as unknown as FirebirdPool,
+  generator: {
+    // optional generator options
+  },
 });
 ```
 
