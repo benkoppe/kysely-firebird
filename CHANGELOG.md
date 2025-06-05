@@ -1,5 +1,17 @@
 # kysely-firebird
 
+## 1.1.2
+
+### Patch Changes
+
+- Bundle prettier with dependencies
+
+## 1.1.1
+
+### Patch Changes
+
+- Properly configure tsup build output
+
 ## 1.1.0
 
 ### Minor Changes
